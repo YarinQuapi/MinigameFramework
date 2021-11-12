@@ -1,0 +1,5 @@
+# Config updated for version ${project.version}
+
+games:
+  start_percentage: 70
+  start_timer: 10

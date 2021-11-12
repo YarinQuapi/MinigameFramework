@@ -12,6 +12,9 @@ public final class MinigameFramework extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+
+        this.saveDefaultConfig();
+
         arenaManager = new ArenaManager(this);
 
         getCommand("arena").setExecutor(new ArenaCommand());
