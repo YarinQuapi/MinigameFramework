@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class ArenaManager {
     @Getter private final Map<Player, Arena> arenaEditor = new HashMap<>();
-    private final Map<String, Arena> arenaSet = new HashMap<>();
+    private final Map<String, Arena> arenaMap = new HashMap<>();
 
     @Getter private static ArenaManager arenaManager;
 
@@ -36,7 +36,7 @@ public class ArenaManager {
         Arena arena = new Arena(arenaName, player.getWorld().getName(), maxPlayers);
 
         arenaEditor.put(player, arena);
-        arenaSet.put(arenaName, arena);
+        arenaMap.put(arenaName, arena);
 
         try {
             this.saveArena(arena);
@@ -59,7 +59,7 @@ public class ArenaManager {
     }
 
     public boolean isLoaded(String arena) {
-        return arenaSet.values().stream().anyMatch(x -> x.getArenaName().equalsIgnoreCase(arena));
+        return arenaMap.values().stream().anyMatch(x -> x.getArenaName().equalsIgnoreCase(arena));
     }
 
     public Arena getEditArena(Player player) {
@@ -67,7 +67,7 @@ public class ArenaManager {
     }
 
     public Arena getArena(String arena) throws ArenaNotExistException {
-        return arenaSet.values().stream().filter(x -> x.getArenaName().equalsIgnoreCase(arena)).findFirst().orElseThrow(ArenaNotExistException::new);
+        return arenaMap.values().stream().filter(x -> x.getArenaName().equalsIgnoreCase(arena)).findFirst().orElseThrow(ArenaNotExistException::new);
     }
 
     public void saveArena(Arena arena) throws IOException {
@@ -84,9 +84,9 @@ public class ArenaManager {
 
         if (!isLoaded(arenaName)) {
             Arena arena = gson.fromJson(arenaData.getString(arenaName), Arena.class);
-            arenaSet.put(arenaName, arena);
+            arenaMap.put(arenaName, arena);
             return arena;
-        } else return arenaSet.get(arenaName);
+        } else return arenaMap.get(arenaName);
     }
 
     private void save() {
