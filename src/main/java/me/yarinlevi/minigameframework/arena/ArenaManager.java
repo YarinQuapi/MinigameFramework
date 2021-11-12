@@ -18,13 +18,13 @@ public class ArenaManager {
     @Getter private final Map<Player, Arena> arenaEditor = new HashMap<>();
     private final Map<String, Arena> arenaSet = new HashMap<>();
 
-    private final MinigameFramework instance;
+    @Getter private static ArenaManager arenaManager;
 
     protected File arenaFile;
     protected FileConfiguration arenaData;
 
     public ArenaManager(MinigameFramework instance) {
-        this.instance = instance;
+        arenaManager = this;
 
         this.arenaFile = new File(instance.getDataFolder(), "arenas.yml");
         this.arenaData = YamlConfiguration.loadConfiguration(this.arenaFile);
@@ -71,21 +71,22 @@ public class ArenaManager {
     }
 
     public void saveArena(Arena arena) throws IOException {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Gson gson = new Gson();
 
         String json = gson.toJson(arena);
 
         arenaData.set(arena.getArenaName(), json);
         save();
-
     }
 
     public Arena loadArena(String arenaName) throws FileNotFoundException {
         Gson gson = new Gson();
 
-        Arena arena = gson.fromJson(arenaData.getString(arenaName), Arena.class);
-        arenaSet.put(arenaName, arena);
-        return arena;
+        if (!isLoaded(arenaName)) {
+            Arena arena = gson.fromJson(arenaData.getString(arenaName), Arena.class);
+            arenaSet.put(arenaName, arena);
+            return arena;
+        } else return arenaSet.get(arenaName);
     }
 
     private void save() {

@@ -2,13 +2,17 @@ package me.yarinlevi.minigameframework.arena;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.yarinlevi.minigameframework.data.MiniaturizedLocation;
+import me.yarinlevi.minigameframework.utilities.MiniaturizedLocation;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This Arena class supports single death games only!
+ * Meaning games with respawning abilities will not work.
+ */
 public class Arena {
     @Getter private final List<Player> arenaPlayers = new ArrayList<>();
     @Getter @Setter private int maxPlayers;
@@ -28,6 +32,10 @@ public class Arena {
 
     public void removeLocation(int index) {
         this.locations.remove(index);
+    }
+
+    public boolean isFull() {
+        return (maxPlayers / arenaPlayers.size()) == 1;
     }
 
     public boolean addPlayer(Player player) {

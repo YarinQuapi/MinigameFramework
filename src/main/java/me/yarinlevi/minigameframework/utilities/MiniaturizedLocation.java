@@ -1,4 +1,4 @@
-package me.yarinlevi.minigameframework.data;
+package me.yarinlevi.minigameframework.utilities;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -16,5 +16,9 @@ public record MiniaturizedLocation(int x, int y, int z, float yaw, float pitch, 
 
     public Location toLocation() {
         return new Location(Bukkit.getWorld(worldName), x, y, z, yaw, pitch);
+    }
+
+    public String prettyPrint() {
+        return "X: " + x + " Y: " + y + " Z: " + z + " Yaw: " + yaw + " Pitch: " + pitch + " World: " + worldName;
     }
 }
