@@ -2,20 +2,32 @@ package me.yarinlevi.minigameframework.arena;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.yarinlevi.minigameframework.data.MiniaturizedLocation;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Arena {
-    @Getter private final Set<Player> arenaPlayers = new HashSet<>();
+    @Getter private final List<Player> arenaPlayers = new ArrayList<>();
     @Getter @Setter private int maxPlayers;
     @Getter @Setter private String worldName;
+    @Getter @Setter private String arenaName;
+    @Getter private final List<MiniaturizedLocation> locations = new ArrayList<>();
 
-    public Arena(String world, int maxPlayers) {
+    protected Arena(String arenaName, String world, int maxPlayers) {
+        this.arenaName = arenaName;
         this.maxPlayers = maxPlayers;
         this.worldName = world;
+    }
+
+    public void addLocation(Location location) {
+        this.locations.add(MiniaturizedLocation.construct(location));
+    }
+
+    public void removeLocation(int index) {
+        this.locations.remove(index);
     }
 
     public boolean addPlayer(Player player) {

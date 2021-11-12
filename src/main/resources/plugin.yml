@@ -1,4 +1,8 @@
-name: Minigame Framework
+name: MinigameFramework
 version: '${project.version}'
 main: me.yarinlevi.minigameframework.MinigameFramework
 api-version: 1.17
+
+commands:
+  arena:
+    permission: minigameframework.admin
