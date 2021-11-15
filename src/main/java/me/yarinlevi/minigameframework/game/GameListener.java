@@ -38,7 +38,7 @@ public record GameListener(Game game) implements Listener {
     @EventHandler
     public void onPlayerKill(EntityDeathEvent event) {
         if (event.getEntity() instanceof Player victim) {
-            if (victim.getKiller() != null) {
+            if (victim.getKiller() != null && game.isInGame(victim)) {
                 PlayerKillEvent playerKillEvent = new PlayerKillEvent(game, victim, victim.getKiller());
                 MinigameFramework.getInstance().getServer().getPluginManager().callEvent(playerKillEvent);
             }

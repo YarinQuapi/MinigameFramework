@@ -1,6 +1,5 @@
 package me.yarinlevi.minigameframework.utilities;
 
-import lombok.Getter;
 import me.yarinlevi.minigameframework.MinigameFramework;
 import org.bukkit.configuration.file.FileConfiguration;
 

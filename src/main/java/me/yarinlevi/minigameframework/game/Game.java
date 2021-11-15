@@ -6,6 +6,7 @@ import me.yarinlevi.minigameframework.arena.Arena;
 import me.yarinlevi.minigameframework.utilities.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,16 +65,41 @@ public class Game {
         }
     }
 
+    public void construct() {
+        gameListener = new GameListener(this);
+    }
+
     /**
      * Main start method
      */
     public void start() {
         started = true;
 
-        gameListener = new GameListener(this);
-        Bukkit.getServer().getPluginManager().registerEvents(gameListener, MinigameFramework.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(this.gameListener, MinigameFramework.getInstance());
 
         // Edit code per minigame, here we'll allow for movement and enable pvp.
+    }
+
+    /**
+     * Used to replace the game's listener to allow for custom options per game and runtime editing
+     * @param gameListener the new listener
+     */
+    public void replaceGameListener(Class<? extends GameListener> gameListener) {
+        try {
+            GameListener gl = gameListener.newInstance();
+
+            this.unregisterGameListener();
+
+            this.gameListener = gl;
+            Bukkit.getServer().getPluginManager().registerEvents(gl, MinigameFramework.getInstance());
+
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void unregisterGameListener() {
+        HandlerList.unregisterAll(this.gameListener);
     }
 
     /**

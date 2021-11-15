@@ -2,19 +2,11 @@ package me.yarinlevi.minigameframework.arena;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.yarinlevi.minigameframework.MinigameFramework;
 import me.yarinlevi.minigameframework.utilities.MiniaturizedLocation;
-import me.yarinlevi.minigameframework.utilities.Settings;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * This Arena class supports single death games only!
@@ -24,6 +16,7 @@ public class Arena {
     @Getter @Setter private int maxPlayers;
     @Getter @Setter private String worldName;
     @Getter @Setter private String arenaName;
+    @Getter @Setter private boolean running = false;
     @Getter private final List<MiniaturizedLocation> locations = new ArrayList<>();
 
     protected Arena(String arenaName, String world, int maxPlayers) {

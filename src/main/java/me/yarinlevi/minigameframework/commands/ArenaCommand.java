@@ -8,7 +8,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class ArenaCommand implements CommandExecutor {
@@ -19,13 +18,7 @@ public class ArenaCommand implements CommandExecutor {
             switch (args[0].toLowerCase()) {
                 case "createarena" -> MinigameFramework.getArenaManager().createArena(player, args[1], Integer.parseInt(args[2]));
 
-                case "loadarena" -> {
-                    try {
-                        MinigameFramework.getArenaManager().loadArena(args[1]);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                }
+                case "loadarena" -> MinigameFramework.getArenaManager().loadArena(args[1]);
 
                 case "edit" -> {
                     try {

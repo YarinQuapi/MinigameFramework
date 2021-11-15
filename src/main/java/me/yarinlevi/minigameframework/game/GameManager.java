@@ -4,19 +4,18 @@ import lombok.Getter;
 import me.yarinlevi.minigameframework.MinigameFramework;
 import me.yarinlevi.minigameframework.arena.Arena;
 import me.yarinlevi.minigameframework.exceptions.ArenaNotExistException;
+import me.yarinlevi.minigameframework.exceptions.NoArenaAvailable;
 import me.yarinlevi.minigameframework.exceptions.PlayerNotInGameException;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author YarinQuapi
  **/
 public class GameManager {
-
     @Getter private final List<Game> availableGames = new ArrayList<>();
 
     /**
@@ -35,16 +34,39 @@ public class GameManager {
     }
 
     /**
+     * Create a new game
+     * @param arena The arena
+     * @return The game instance
+     */
+    public Game createGame(Arena arena) {
+        Game game = new Game(arena);
+
+        availableGames.add(game);
+        return game;
+    }
+
+    /**
+     * Gets the first available game
+     * @return the game
+     * @throws NoArenaAvailable If there are no games and no arenas to open games on.
+     */
+    public Game getAvailable() throws NoArenaAvailable {
+        return availableGames.stream().filter(game -> !game.isStarted()).findFirst().orElse(this.createGame(MinigameFramework.getArenaManager().getAvailable()));
+    }
+
+    /**
+     * Gets all the games that have not started and that don't contain max players
+     * @return A list of all 'empty' games
+     */
+    public List<Game> getAllEmptyGames() {
+        return this.availableGames.stream().filter(game -> !game.isStarted()).filter(game -> !game.isFull()).collect(Collectors.toList());
+    }
+
+    /**
      * Gets the game the player is present in
      * @throws PlayerNotInGameException If the player was not found in any game
      */
     public Game getPlayerGame(Player player) throws PlayerNotInGameException {
-        for (Game game : availableGames) {
-            if (game.isInGame(player)) {
-                return game;
-            }
-        }
-
-        throw new PlayerNotInGameException();
+        return this.availableGames.stream().filter(game -> game.isInGame(player)).findFirst().orElseThrow(PlayerNotInGameException::new);
     }
 }
