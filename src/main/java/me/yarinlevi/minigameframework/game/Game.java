@@ -16,6 +16,7 @@ import java.util.List;
  **/
 public class Game {
     private final Arena arena;
+    @Getter private final String gameName;
     @Getter private final List<Player> gamePlayers = new ArrayList<>();
     @Getter private GameState gameState = GameState.UNINITIALIZED;
 
@@ -27,6 +28,7 @@ public class Game {
 
     protected Game(Arena arena) {
         this.arena = arena;
+        this.gameName = arena.getArenaName();
     }
 
     public void startStartProcess() {
@@ -74,6 +76,8 @@ public class Game {
      */
     public void start() {
         started = true;
+        tick = 0; // Reset tick clock to allow for accurate game time count
+        gameTimer = 0; // Just in case
 
         Bukkit.getServer().getPluginManager().registerEvents(this.gameListener, MinigameFramework.getInstance());
 
@@ -139,6 +143,7 @@ public class Game {
     public boolean removePlayer(Player player) {
         if (gamePlayers.contains(player)) {
             gamePlayers.remove(player);
+            player.teleport(MinigameFramework.getServerSpawn().getServerSpawn());
             return true;
         } else return false;
     }
