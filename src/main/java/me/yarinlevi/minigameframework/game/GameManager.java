@@ -24,13 +24,17 @@ public class GameManager {
      * @return The game instance
      * @throws ArenaNotExistException If arena wasn't loaded or doesn't exist
      */
-    public Game createGame(String arenaGame) throws ArenaNotExistException {
-        Arena arena = MinigameFramework.getArenaManager().getArena(arenaGame);
+    public Game createGame(String arenaGame) throws ArenaNotExistException, NoArenaAvailable {
+        Arena arena = MinigameFramework.getFramework().getArenaManager().getArena(arenaGame);
 
-        Game game = new Game(arena);
+        if (!arena.isAssigned()) {
+            Game game = new Game(arena);
 
-        availableGames.add(game);
-        return game;
+            arena.setAssigned(true);
+
+            availableGames.add(game);
+            return game;
+        } else throw new NoArenaAvailable();
     }
 
     /**
@@ -38,8 +42,12 @@ public class GameManager {
      * @param arena The arena
      * @return The game instance
      */
-    public Game createGame(Arena arena) {
+    public Game createGame(Arena arena) throws NoArenaAvailable {
+        if (arena.isAssigned()) throw new NoArenaAvailable();
+
         Game game = new Game(arena);
+
+        arena.setAssigned(true);
 
         availableGames.add(game);
         return game;
@@ -51,7 +59,7 @@ public class GameManager {
      * @throws NoArenaAvailable If there are no games and no arenas to open games on.
      */
     public Game getAvailable() throws NoArenaAvailable {
-        return availableGames.stream().filter(game -> !game.isStarted()).findFirst().orElse(this.createGame(MinigameFramework.getArenaManager().getAvailable()));
+        return availableGames.stream().filter(game -> !game.isStarted()).findFirst().orElse(this.createGame(MinigameFramework.getFramework().getArenaManager().getAvailable()));
     }
 
     /**

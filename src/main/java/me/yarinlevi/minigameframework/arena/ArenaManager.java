@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ArenaManager {
-    @Getter private final Map<Player, Arena> arenaEditor = new HashMap<>();
+    @Getter private final Map<Player, ArenaEdit> arenaEditor = new HashMap<>();
     private final Map<String, Arena> arenaMap = new HashMap<>();
 
     @Getter private static ArenaManager arenaManager;
@@ -37,7 +37,7 @@ public class ArenaManager {
     public void loadArenas() {
         arenaData.getKeys(false).forEach(x -> {
             if (!isLoaded(x)) {
-                loadArena(x);
+                loadArena(x).resetArena();
             }
         });
     }
@@ -51,14 +51,8 @@ public class ArenaManager {
     public void createArena(Player player, String arenaName, int maxPlayers) {
         Arena arena = new Arena(arenaName, player.getWorld().getName(), maxPlayers);
 
-        arenaEditor.put(player, arena);
+        arenaEditor.put(player, new ArenaEdit(arena));
         arenaMap.put(arenaName, arena);
-
-        try {
-            this.saveArena(arena);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -69,7 +63,7 @@ public class ArenaManager {
      */
     public void editArena(Player player, String arenaName) throws ArenaNotExistException {
         Arena arena = getArena(arenaName);
-        arenaEditor.put(player, arena);
+        arenaEditor.put(player, new ArenaEdit(arena));
     }
 
     /**
@@ -86,11 +80,19 @@ public class ArenaManager {
      * @return Arena object
      */
     public Arena getEditArena(Player player) {
+        return arenaEditor.get(player).getArena();
+    }
+
+    /**
+     * Gets the arena the player is currently editing
+     * @return Arena object
+     */
+    public ArenaEdit getEditArenaData(Player player) {
         return arenaEditor.get(player);
     }
 
     public Arena getAvailable() throws NoArenaAvailable {
-        return arenaMap.values().stream().filter(x -> !x.isRunning()).findFirst().orElseThrow(NoArenaAvailable::new);
+        return arenaMap.values().stream().filter(x -> !x.isAssigned()).findFirst().orElseThrow(NoArenaAvailable::new);
     }
 
     /**
@@ -117,9 +119,11 @@ public class ArenaManager {
         save();
     }
 
-    public void loadArena(String arenaName) {
+    public Arena loadArena(String arenaName) {
         Arena arena = gson.fromJson(arenaData.getString(arenaName), Arena.class);
         arenaMap.put(arenaName, arena);
+
+        return arena;
     }
 
     private void save() {

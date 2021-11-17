@@ -1,20 +1,23 @@
 package me.yarinlevi.minigameframework;
 
 import lombok.Getter;
+import lombok.Setter;
 import me.yarinlevi.minigameframework.administration.ServerSpawn;
 import me.yarinlevi.minigameframework.arena.ArenaManager;
 import me.yarinlevi.minigameframework.commands.AdminCommand;
 import me.yarinlevi.minigameframework.commands.ArenaCommand;
 import me.yarinlevi.minigameframework.commands.PlayerCommand;
+import me.yarinlevi.minigameframework.exceptions.ArenaNotExistException;
+import me.yarinlevi.minigameframework.exceptions.NoArenaAvailable;
 import me.yarinlevi.minigameframework.game.GameManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class MinigameFramework {
     @Getter private static JavaPlugin instance;
     @Getter private static MinigameFramework framework;
-    @Getter private static ArenaManager arenaManager;
-    @Getter private static GameManager gameManager;
-    @Getter private static ServerSpawn serverSpawn;
+    @Getter private ArenaManager arenaManager;
+    @Getter @Setter private GameManager gameManager;
+    @Getter private ServerSpawn serverSpawn;
 
     public void initialize(JavaPlugin javaPlugin) {
         framework = this;
@@ -29,6 +32,16 @@ public final class MinigameFramework {
         arenaManager.loadArenas();
 
         gameManager = new GameManager();
+
+        //Load default arenas, games
+        javaPlugin.getConfig().getStringList("auto-load").forEach(arenaName -> {
+            try {
+                gameManager.createGame(arenaName);
+            } catch (ArenaNotExistException | NoArenaAvailable e) {
+                e.printStackTrace();
+            }
+        });
+
 
         javaPlugin.getCommand("arena").setExecutor(new ArenaCommand());
         javaPlugin.getCommand("game").setExecutor(new PlayerCommand());

@@ -5,19 +5,24 @@ import me.yarinlevi.minigameframework.MinigameFramework;
 import me.yarinlevi.minigameframework.arena.Arena;
 import me.yarinlevi.minigameframework.utilities.Settings;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author YarinQuapi
+ * Used as a base Game class, can be replaced with a custom one.
  **/
 public class Game {
     private final Arena arena;
     @Getter private final String gameName;
     @Getter private final List<Player> gamePlayers = new ArrayList<>();
+    @Getter private final List<Player> alivePlayers = new ArrayList<>();
     @Getter private GameState gameState = GameState.UNINITIALIZED;
 
     @Getter private boolean started = false;
@@ -25,6 +30,8 @@ public class Game {
     private int countdown = Settings.GAME_START_TIMER;
     @Getter private int gameTimer = 0;
     private GameListener gameListener;
+
+    private BukkitTask task;
 
     protected Game(Arena arena) {
         this.arena = arena;
@@ -35,7 +42,7 @@ public class Game {
         this.gameState = GameState.STARTING;
 
         // Starts onTick() timer
-        Bukkit.getScheduler().runTaskTimer(MinigameFramework.getInstance(), this::onTick, 1L, 1L);
+        task = Bukkit.getScheduler().runTaskTimer(MinigameFramework.getInstance(), this::onTick, 1L, 1L);
     }
 
     /**
@@ -63,10 +70,19 @@ public class Game {
 
             } else if (gameState == GameState.RUNNING) {
                 gameTimer++;
+
+                if (this.alivePlayers.size() == 1) {
+                    Player winner = this.alivePlayers.stream().findFirst().get();
+
+                    this.win(winner);
+                }
             }
         }
     }
 
+    /**
+     * Registers technical stuff like game listeners
+     */
     public void construct() {
         gameListener = new GameListener(this);
     }
@@ -78,11 +94,65 @@ public class Game {
         started = true;
         tick = 0; // Reset tick clock to allow for accurate game time count
         gameTimer = 0; // Just in case
+        alivePlayers.addAll(gamePlayers); // Copy players
+
+        this.gameState = GameState.RUNNING;
 
         Bukkit.getServer().getPluginManager().registerEvents(this.gameListener, MinigameFramework.getInstance());
 
         // Edit code per minigame, here we'll allow for movement and enable pvp.
     }
+
+    public void win(Player player) {
+        this.task.cancel();
+        this.unregisterGameListener();
+
+        player.sendTitle("§eVictory Royale!", "§6You've won the game!", 10, 200, 20);
+
+        this.reset();
+    }
+
+    public void reset() {
+        this.gameState = GameState.RESTARTING;
+
+        Location location = MinigameFramework.getFramework().getServerSpawn().getServerSpawn();
+
+        this.task.cancel();
+
+        // Teleport everyone out of the game and set their gamemode to survival //Todo: allow gamemode configuration
+        this.gamePlayers.forEach(player -> {
+            player.setGameMode(GameMode.SURVIVAL);
+            player.teleport(location);
+        });
+
+        this.gamePlayers.clear();
+        this.alivePlayers.clear();
+
+        // Reset technical variables
+        this.started = false;
+        this.tick = 0;
+        this.gameTimer = 0;
+
+        // Todo: Reset arena process
+        // Preferably with FA/WorldEdit schematic api
+        this.arena.resetArena();
+
+
+        // Set GameState to uninitialized to allow for joining
+        this.gameState = GameState.UNINITIALIZED;
+    }
+
+    /**
+     * Used method when a player dies, declares him dead
+     * @param player
+     */
+    public void lose(Player player) {
+        player.setGameMode(GameMode.SPECTATOR);
+        alivePlayers.remove(player);
+        arena.getLocations().get(this.gamePlayers.indexOf(player)).teleport(player);
+        player.sendTitle("§cYou lose!", "§ePlease use /game leave to return to lobby", 10, 200, 20);
+    }
+
 
     /**
      * Used to replace the game's listener to allow for custom options per game and runtime editing
@@ -92,7 +162,7 @@ public class Game {
         try {
             GameListener gl = gameListener.newInstance();
 
-            this.unregisterGameListener();
+            if (this.gameListener != null) this.unregisterGameListener();
 
             this.gameListener = gl;
             Bukkit.getServer().getPluginManager().registerEvents(gl, MinigameFramework.getInstance());
@@ -117,7 +187,7 @@ public class Game {
             this.gamePlayers.add(player);
 
             // Teleports player to his spawn location
-            player.teleport(arena.getLocations().get(this.gamePlayers.indexOf(player)).toLocation());
+            arena.getLocations().get(this.gamePlayers.indexOf(player)).teleport(player);
 
             // Begin start process if enough players are present
             if (canStart()) {
@@ -143,7 +213,11 @@ public class Game {
     public boolean removePlayer(Player player) {
         if (gamePlayers.contains(player)) {
             gamePlayers.remove(player);
-            player.teleport(MinigameFramework.getServerSpawn().getServerSpawn());
+
+            alivePlayers.remove(player); // Remove if player uses /lobby
+
+            player.teleport(MinigameFramework.getFramework().getServerSpawn().getServerSpawn());
+            player.setGameMode(GameMode.SURVIVAL);
             return true;
         } else return false;
     }
@@ -153,11 +227,11 @@ public class Game {
      * @return true or false
      */
     public boolean isFull() {
-        return (arena.getMaxPlayers() / gamePlayers.size()) == 1;
+        return (gamePlayers.size() >= arena.getMaxPlayers());
     }
 
     private boolean canStart() {
-        return (arena.getMaxPlayers() / gamePlayers.size()) * 100 > Settings.GAME_MIN_PERCENTAGE;
+        return (gamePlayers.size() / arena.getMaxPlayers()) * 100 > Settings.GAME_MIN_PERCENTAGE;
     }
 
     /**

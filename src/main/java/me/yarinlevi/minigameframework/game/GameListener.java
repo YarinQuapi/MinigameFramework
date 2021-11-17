@@ -41,6 +41,12 @@ public record GameListener(Game game) implements Listener {
             if (victim.getKiller() != null && game.isInGame(victim)) {
                 PlayerKillEvent playerKillEvent = new PlayerKillEvent(game, victim, victim.getKiller());
                 MinigameFramework.getInstance().getServer().getPluginManager().callEvent(playerKillEvent);
+
+                game.lose(victim);
+
+                if (game.getAlivePlayers().size() == 1) {
+                    game.win(game.getAlivePlayers().stream().findFirst().orElseThrow());
+                }
             }
         }
     }

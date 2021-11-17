@@ -1,10 +1,14 @@
 package me.yarinlevi.minigameframework.arena;
 
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import lombok.Getter;
 import lombok.Setter;
+import me.yarinlevi.minigameframework.MinigameFramework;
 import me.yarinlevi.minigameframework.utilities.MiniaturizedLocation;
+import me.yarinlevi.minigameframework.worldedit.WorldEditUtils;
 import org.bukkit.Location;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +20,9 @@ public class Arena {
     @Getter @Setter private int maxPlayers;
     @Getter @Setter private String worldName;
     @Getter @Setter private String arenaName;
-    @Getter @Setter private boolean running = false;
-    @Getter private final List<MiniaturizedLocation> locations = new ArrayList<>();
+    @Getter @Setter private boolean assigned = false;
+    @Getter @Setter private MiniaturizedLocation pasteLocation;
+    @Getter private List<MiniaturizedLocation> locations = new ArrayList<>();
 
     protected Arena(String arenaName, String world, int maxPlayers) {
         this.arenaName = arenaName;
@@ -31,5 +36,13 @@ public class Arena {
 
     public void removeLocation(int index) {
         this.locations.remove(index);
+    }
+
+    public void resetArena() {
+        String arenaName = this.getArenaName();
+
+        File file = new File(MinigameFramework.getInstance().getDataFolder() + "/schematics/", arenaName + ".schem");
+
+        WorldEditUtils.paste(BukkitAdapter.adapt(pasteLocation.toLocation().getWorld()), WorldEditUtils.load(file), pasteLocation.toLocation().toVector());
     }
 }

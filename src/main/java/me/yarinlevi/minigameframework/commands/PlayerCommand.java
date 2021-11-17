@@ -18,12 +18,12 @@ public class PlayerCommand implements CommandExecutor {
                 case "join" -> {
                     String game = args[1];
 
-                    MinigameFramework.getGameManager().getAvailableGames().stream().filter(x -> x.getGameName().equalsIgnoreCase(game)).findFirst().get().addPlayer(player);
+                    MinigameFramework.getFramework().getGameManager().getAvailableGames().stream().filter(x -> x.getGameName().equalsIgnoreCase(game)).findFirst().get().addPlayer(player);
                 }
 
                 case "leave" -> {
                     try {
-                        MinigameFramework.getGameManager().getPlayerGame(player).removePlayer(player);
+                        MinigameFramework.getFramework().getGameManager().getPlayerGame(player).removePlayer(player);
                     } catch (PlayerNotInGameException e) {
                         e.printStackTrace();
                     }

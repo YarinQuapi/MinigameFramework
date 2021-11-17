@@ -1,5 +1,6 @@
 package me.yarinlevi.minigameframework.administration;
 
+import com.google.gson.Gson;
 import lombok.Getter;
 import me.yarinlevi.minigameframework.MinigameFramework;
 import me.yarinlevi.minigameframework.utilities.FileUtils;
@@ -24,7 +25,9 @@ public class ServerSpawn {
 
         FileUtils.registerData(file, data);
 
-        data.set("spawn", MiniaturizedLocation.construct(location));
+        Gson gson = new Gson();
+
+        data.set("spawn", gson.toJson(MiniaturizedLocation.construct(location)));
 
         FileUtils.saveData(file, data);
     }
@@ -36,7 +39,7 @@ public class ServerSpawn {
         FileUtils.registerData(file, data);
 
         if (data.contains("spawn")) {
-            this.serverSpawn = ((MiniaturizedLocation) data.get("spawn")).toLocation();
+            this.serverSpawn = new Gson().fromJson(data.getString("spawn"), MiniaturizedLocation.class).toLocation();
         } else {
             MinigameFramework.getInstance().getLogger().severe("Hey! no server spawn is defined! the framework wont work without it!");
         }
