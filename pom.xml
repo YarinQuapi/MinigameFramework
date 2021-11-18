@@ -93,4 +93,13 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub YarinQuapi Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/YarinQuapi/Minigame-framework</url>
+        </repository>
+    </distributionManagement>
 </project>
