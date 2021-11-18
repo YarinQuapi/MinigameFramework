@@ -1,6 +1,7 @@
 package me.yarinlevi.minigameframework.game.events;
 
 import lombok.Getter;
+import lombok.Setter;
 import me.yarinlevi.minigameframework.game.Game;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -9,16 +10,16 @@ import org.bukkit.event.HandlerList;
 /**
  * @author YarinQuapi
  **/
-public class PlayerKillEvent extends Event {
+public class PlayerDeathEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
     @Getter private final Game game;
-    @Getter private final Player killer,victim;
+    @Getter private final Player victim;
+    @Getter @Setter private Player killer;
 
-    public PlayerKillEvent(Game game, Player killer, Player victim) {
+    public PlayerDeathEvent(Game game, Player victim) {
         this.game = game;
-        this.killer = killer;
         this.victim = victim;
     }
 

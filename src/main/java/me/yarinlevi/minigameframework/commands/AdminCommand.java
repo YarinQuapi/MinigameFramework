@@ -47,7 +47,7 @@ public class AdminCommand implements CommandExecutor {
                         Game game = MinigameFramework.getFramework().getGameManager().getPlayerGame(player);
 
                         game.construct();
-                        game.start();
+                        game.begin();
                     } catch (PlayerNotInGameException e) {
                         player.sendMessage("§cYou are not in a game!");
                     }

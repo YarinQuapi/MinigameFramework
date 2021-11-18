@@ -10,6 +10,7 @@ import me.yarinlevi.minigameframework.commands.PlayerCommand;
 import me.yarinlevi.minigameframework.exceptions.ArenaNotExistException;
 import me.yarinlevi.minigameframework.exceptions.NoArenaAvailable;
 import me.yarinlevi.minigameframework.game.GameManager;
+import me.yarinlevi.minigameframework.player.Statistics;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class MinigameFramework {
@@ -18,6 +19,7 @@ public final class MinigameFramework {
     @Getter private ArenaManager arenaManager;
     @Getter @Setter private GameManager gameManager;
     @Getter private ServerSpawn serverSpawn;
+    @Getter @Setter private Statistics statistics;
 
     public void initialize(JavaPlugin javaPlugin) {
         framework = this;

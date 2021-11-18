@@ -6,8 +6,11 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
+/**
+ * @author YarinQuapi
+ * A class that is convertible to Json without private Java reflection access issues
+ */
 public class MiniaturizedLocation {
-
     @Getter private int x,y,z;
     @Getter private float yaw,pitch;
     @Getter private String worldName;

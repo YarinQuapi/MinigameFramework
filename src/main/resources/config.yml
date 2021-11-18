@@ -1,4 +1,9 @@
 # Config updated for version ${project.version}
+# **** NOTE ****
+# THIS IS A DEMO CONFIG AND WONT BE USED
+
+player:
+  kill_coin_gain: 10
 
 games:
   start_percentage: 70

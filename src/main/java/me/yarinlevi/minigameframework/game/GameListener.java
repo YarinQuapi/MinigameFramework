@@ -2,7 +2,7 @@ package me.yarinlevi.minigameframework.game;
 
 import me.yarinlevi.minigameframework.MinigameFramework;
 import me.yarinlevi.minigameframework.game.events.GameStartEvent;
-import me.yarinlevi.minigameframework.game.events.PlayerKillEvent;
+import me.yarinlevi.minigameframework.game.events.PlayerDeathEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,7 +13,9 @@ import org.bukkit.event.player.PlayerMoveEvent;
 /**
  * @author YarinQuapi
  **/
-public record GameListener(Game game) implements Listener {
+public class GameListener implements Listener {
+    private final Game game;
+
     public GameListener(Game game) {
         this.game = game;
 
@@ -39,7 +41,10 @@ public record GameListener(Game game) implements Listener {
     public void onPlayerKill(EntityDeathEvent event) {
         if (event.getEntity() instanceof Player victim) {
             if (victim.getKiller() != null && game.isInGame(victim)) {
-                PlayerKillEvent playerKillEvent = new PlayerKillEvent(game, victim, victim.getKiller());
+                PlayerDeathEvent playerKillEvent = new PlayerDeathEvent(game, victim);
+
+                playerKillEvent.setKiller(victim.getKiller());
+
                 MinigameFramework.getInstance().getServer().getPluginManager().callEvent(playerKillEvent);
 
                 game.lose(victim);
@@ -47,6 +52,8 @@ public record GameListener(Game game) implements Listener {
                 if (game.getAlivePlayers().size() == 1) {
                     game.win(game.getAlivePlayers().stream().findFirst().orElseThrow());
                 }
+            } else if (victim.getKiller() == null && game.isInGame(victim)) {
+
             }
         }
     }

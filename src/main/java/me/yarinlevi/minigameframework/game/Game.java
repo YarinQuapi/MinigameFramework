@@ -19,7 +19,7 @@ import java.util.List;
  * Used as a base Game class, can be replaced with a custom one.
  **/
 public class Game {
-    private final Arena arena;
+    @Getter private final Arena arena;
     @Getter private final String gameName;
     @Getter private final List<Player> gamePlayers = new ArrayList<>();
     @Getter private final List<Player> alivePlayers = new ArrayList<>();
@@ -61,7 +61,7 @@ public class Game {
 
                     if (countdown == 0) {
                         gameState = GameState.RUNNING;
-                        this.start();
+                        this.begin();
                     }
                 } else {
                     gameState = GameState.UNINITIALIZED;
@@ -90,7 +90,7 @@ public class Game {
     /**
      * Main start method
      */
-    public void start() {
+    public void begin() {
         started = true;
         tick = 0; // Reset tick clock to allow for accurate game time count
         gameTimer = 0; // Just in case
@@ -100,7 +100,11 @@ public class Game {
 
         Bukkit.getServer().getPluginManager().registerEvents(this.gameListener, MinigameFramework.getInstance());
 
-        // Edit code per minigame, here we'll allow for movement and enable pvp.
+        this.start();
+    }
+
+    public void start() {
+
     }
 
     public void win(Player player) {
