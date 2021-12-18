@@ -10,10 +10,10 @@ The goal is to allow almost anyone to easily create and manage their Minigames, 
 * An arena editor to make for easier setup (W.I.P)
 
 ## Roadmap
-### From now until 2022
-The plan is to have the first out-of-beta release by January 1st 2022 and that would be 0.1R
+### From now until the first release
+The updated plan is to have the framework be minimally supportive and working somewhen in Q1 2022 (January-March)
 The idea of that version would be to support single-player-teams games like Skywars or Survival Games
-### From 2022 and to the future
+### From 0.1R and to the future
 The main plan is to release an update atleast once per month adding a new major feature
 Features may include:
 * Teams mode! For minigames that aren't just about you.
@@ -23,5 +23,5 @@ Features may include:
 And so much more to come.
 
 ## Libraries & APIs used
-* [gson](https://github.com/google/gson) by Google
-* [WorldEdit](https://github.com/EngineHub/WorldEdit) by EngineHub
+* [gson 2.8.5](https://github.com/google/gson) by Google
+* [WorldEdit 7.2.8](https://github.com/EngineHub/WorldEdit) by EngineHub
