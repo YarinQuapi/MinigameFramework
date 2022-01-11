@@ -1,8 +1,12 @@
 package me.yarinlevi.minigameframework.game;
 
 import lombok.Getter;
+import lombok.Setter;
 import me.yarinlevi.minigameframework.MinigameFramework;
 import me.yarinlevi.minigameframework.arena.Arena;
+import me.yarinlevi.minigameframework.game.events.QGameStateChange;
+import me.yarinlevi.minigameframework.game.events.QPlayerJoinGameEvent;
+import me.yarinlevi.minigameframework.game.events.Result;
 import me.yarinlevi.minigameframework.utilities.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -27,9 +31,9 @@ public class Game {
 
     @Getter private boolean started = false;
     private int tick = 0;
-    private int countdown = Settings.GAME_START_TIMER;
+    @Getter private int countdown = Settings.GAME_START_TIMER;
     @Getter private int gameTimer = 0;
-    private GameListener gameListener;
+    @Setter private GameListener gameListener;
 
     private BukkitTask task;
 
@@ -60,12 +64,14 @@ public class Game {
                     countdown--;
 
                     if (countdown == 0) {
-                        gameState = GameState.RUNNING;
                         this.begin();
                     }
                 } else {
                     gameState = GameState.UNINITIALIZED;
                     countdown = Settings.GAME_START_TIMER;
+
+                    Bukkit.getPluginManager().callEvent(new QGameStateChange(this));
+
                 }
 
             } else if (gameState == GameState.RUNNING) {
@@ -88,7 +94,7 @@ public class Game {
     }
 
     /**
-     * Main start method
+     * Technical start, timers, registration, etc.
      */
     public void begin() {
         started = true;
@@ -96,13 +102,18 @@ public class Game {
         gameTimer = 0; // Just in case
         alivePlayers.addAll(gamePlayers); // Copy players
 
+        Bukkit.getServer().getPluginManager().registerEvents(this.gameListener, MinigameFramework.getInstance());
+
         this.gameState = GameState.RUNNING;
 
-        Bukkit.getServer().getPluginManager().registerEvents(this.gameListener, MinigameFramework.getInstance());
+        Bukkit.getPluginManager().callEvent(new QGameStateChange(this));
 
         this.start();
     }
 
+    /**
+     * Player start, e.g. drop cages, move from lobby to game, etc.
+     */
     public void start() {
 
     }
@@ -118,6 +129,7 @@ public class Game {
 
     public void reset() {
         this.gameState = GameState.RESTARTING;
+        Bukkit.getPluginManager().callEvent(new QGameStateChange(this));
 
         Location location = MinigameFramework.getFramework().getServerSpawn().getServerSpawn();
 
@@ -137,13 +149,13 @@ public class Game {
         this.tick = 0;
         this.gameTimer = 0;
 
-        // Todo: Reset arena process
-        // Preferably with FA/WorldEdit schematic api
+        // Resets physical arena
         this.arena.resetArena();
 
 
         // Set GameState to uninitialized to allow for joining
         this.gameState = GameState.UNINITIALIZED;
+        Bukkit.getPluginManager().callEvent(new QGameStateChange(this));
     }
 
     /**
@@ -184,21 +196,30 @@ public class Game {
      * Add a player to the game
      * @return true if added successfully
      */
-    public boolean addPlayer(Player player) {
+    public Result addPlayer(Player player) {
         if (!isJoiningAllowed()) {
-            return false;
+            return Result.denied;
         } else {
-            this.gamePlayers.add(player);
+            QPlayerJoinGameEvent playerJoinGameEvent = new QPlayerJoinGameEvent(this, player);
+            MinigameFramework.getInstance().getServer().getPluginManager().callEvent(playerJoinGameEvent);
 
-            // Teleports player to his spawn location
-            arena.getLocations().get(this.gamePlayers.indexOf(player)).teleport(player);
+            if (playerJoinGameEvent.getResult() == Result.allowed) {
+                this.gamePlayers.add(player);
+                MinigameFramework.getFramework().getGameManager().getPlayersInGame().add(player);
 
-            // Begin start process if enough players are present
-            if (canStart()) {
-                this.startStartProcess(); // Call start process
+
+                // Teleports player to his spawn location
+                arena.getLocations().get(this.gamePlayers.indexOf(player)).teleport(player);
+
+                // Begin start process if enough players are present
+                if (canStart()) {
+                    this.startStartProcess(); // Call start process
+                }
+            } else {
+                return Result.denied;
             }
 
-            return true;
+            return Result.allowed;
         }
     }
 
@@ -222,6 +243,9 @@ public class Game {
 
             player.teleport(MinigameFramework.getFramework().getServerSpawn().getServerSpawn());
             player.setGameMode(GameMode.SURVIVAL);
+
+            MinigameFramework.getFramework().getGameManager().getPlayersInGame().remove(player);
+
             return true;
         } else return false;
     }

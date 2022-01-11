@@ -1,6 +1,5 @@
 package me.yarinlevi.minigameframework.arena;
 
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import lombok.Getter;
 import lombok.Setter;
 import me.yarinlevi.minigameframework.MinigameFramework;
@@ -43,6 +42,6 @@ public class Arena {
 
         File file = new File(MinigameFramework.getInstance().getDataFolder() + "/schematics/", arenaName + ".schem");
 
-        WorldEditUtils.paste(BukkitAdapter.adapt(pasteLocation.toLocation().getWorld()), WorldEditUtils.load(file), pasteLocation.toLocation().toVector());
+        WorldEditUtils.paste(pasteLocation.toLocation().getWorld(), WorldEditUtils.load(file), pasteLocation.toLocation().toVector());
     }
 }

@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
 public class GameManager {
     @Getter private final List<Game> availableGames = new ArrayList<>();
 
+    @Getter private final List<Player> playersInGame = new ArrayList<>();
+
     /**
      * Create a new game
      * @param arenaGame The name of the arena you want

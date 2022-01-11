@@ -1,26 +1,20 @@
 package me.yarinlevi.minigameframework.game.events;
 
 import lombok.Getter;
-import lombok.Setter;
 import me.yarinlevi.minigameframework.game.Game;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
  * @author YarinQuapi
  **/
-public class PlayerDeathEvent extends Event {
-
+public class QGameStartEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
 
     @Getter private final Game game;
-    @Getter private final Player victim;
-    @Getter @Setter private Player killer;
 
-    public PlayerDeathEvent(Game game, Player victim) {
+    public QGameStartEvent(Game game) {
         this.game = game;
-        this.victim = victim;
     }
 
     @Override

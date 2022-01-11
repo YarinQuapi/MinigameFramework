@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.yarinlevi</groupId>
-    <artifactId>Minigame-framework</artifactId>
-    <version>0.1A</version>
+    <artifactId>minigame-framework</artifactId>
+    <version>Prototype-4</version>
     <packaging>jar</packaging>
 
-    <name>Minigame Framework</name>
+    <name>MinigameFramework</name>
 
     <properties>
         <java.version>16</java.version>
@@ -65,6 +65,10 @@
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>placeholderapi</id>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -92,6 +96,19 @@
             <version>2.8.5</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>22.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.11.1</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 
@@ -99,7 +116,7 @@
         <repository>
             <id>github</id>
             <name>GitHub YarinQuapi Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/YarinQuapi/Minigame-framework</url>
+            <url>https://maven.pkg.github.com/YarinQuapi/MinigameFramework</url>
         </repository>
     </distributionManagement>
 </project>

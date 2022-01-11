@@ -6,6 +6,7 @@ import me.yarinlevi.minigameframework.exceptions.ArenaNotExistException;
 import me.yarinlevi.minigameframework.exceptions.NoArenaAvailable;
 import me.yarinlevi.minigameframework.exceptions.PlayerNotInGameException;
 import me.yarinlevi.minigameframework.game.Game;
+import me.yarinlevi.minigameframework.utilities.MessagesUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -33,11 +34,11 @@ public class AdminCommand implements CommandExecutor {
                         try {
                             MinigameFramework.getFramework().getGameManager().createGame(arena);
                         } catch (NoArenaAvailable e) {
-                            player.sendMessage("A game is already running on that arena.");
+                            player.sendMessage(MessagesUtils.getMessage("arena_running"));
                         }
 
                     } catch (ArenaNotExistException e) {
-                        player.sendMessage("No arena with that name was found.");
+                        player.sendMessage(MessagesUtils.getMessage("arena_not_exists"));
                     }
                     return true;
                 }
@@ -48,8 +49,10 @@ public class AdminCommand implements CommandExecutor {
 
                         game.construct();
                         game.begin();
+
+                        player.sendMessage(MessagesUtils.getMessage("admin_force_started"));
                     } catch (PlayerNotInGameException e) {
-                        player.sendMessage("§cYou are not in a game!");
+                        player.sendMessage(MessagesUtils.getMessage("not_in_game"));
                     }
                 }
 
@@ -59,7 +62,7 @@ public class AdminCommand implements CommandExecutor {
 
                         game.reset();
                     } catch (PlayerNotInGameException e) {
-                        player.sendMessage("§cYou are not in a game!");
+                        player.sendMessage(MessagesUtils.getMessage("not_in_game"));
                     }
                 }
             }

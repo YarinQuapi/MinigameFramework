@@ -3,6 +3,7 @@ package me.yarinlevi.minigameframework.commands;
 import me.yarinlevi.minigameframework.MinigameFramework;
 import me.yarinlevi.minigameframework.arena.Arena;
 import me.yarinlevi.minigameframework.exceptions.ArenaNotExistException;
+import me.yarinlevi.minigameframework.utilities.MessagesUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,7 +17,10 @@ public class ArenaCommand implements CommandExecutor {
         if (sender instanceof Player player) {
 
             switch (args[0].toLowerCase()) {
-                case "createarena" -> MinigameFramework.getFramework().getArenaManager().createArena(player, args[1], Integer.parseInt(args[2]));
+                case "createarena" -> {
+                    MinigameFramework.getFramework().getArenaManager().createArena(player, args[1], Integer.parseInt(args[2]));
+                    player.sendMessage(MessagesUtils.getMessage("arena_create_begin"));
+                }
 
                 case "loadarena" -> MinigameFramework.getFramework().getArenaManager().loadArena(args[1]);
 
@@ -24,7 +28,7 @@ public class ArenaCommand implements CommandExecutor {
                     try {
                         MinigameFramework.getFramework().getArenaManager().editArena(player, args[1]);
                     } catch (ArenaNotExistException e) {
-                        player.sendMessage("§cCouldn't edit arena!");
+                        player.sendMessage(MessagesUtils.getMessage("arena_not_exists"));
                     }
                 }
 
@@ -40,21 +44,30 @@ public class ArenaCommand implements CommandExecutor {
                     switch (args[1].toLowerCase()) {
                         case "pos1" -> {
                             MinigameFramework.getFramework().getArenaManager().getEditArenaData(player).setPos1(player.getLocation().toVector());
+                            player.sendMessage(MessagesUtils.getMessage("admin_arena_pos1"));
                         }
 
                         case "pos2" -> {
                             MinigameFramework.getFramework().getArenaManager().getEditArenaData(player).setPos2(player.getLocation().toVector());
+                            player.sendMessage(MessagesUtils.getMessage("admin_arena_pos2"));
                         }
                     }
                 }
 
                 case "savemap" -> {
                     MinigameFramework.getFramework().getArenaManager().getEditArenaData(player).save(player.getLocation());
+                    player.sendMessage(MessagesUtils.getMessage("admin_arena_savemap"));
                 }
 
-                case "addlocation" -> MinigameFramework.getFramework().getArenaManager().getEditArena(player).addLocation(player.getLocation());
+                case "addlocation" -> {
+                    MinigameFramework.getFramework().getArenaManager().getEditArena(player).addLocation(player.getLocation());
+                    player.sendMessage(MessagesUtils.getMessage("admin_arena_addlocation"));
+                }
 
-                case "removelocation" -> MinigameFramework.getFramework().getArenaManager().getEditArena(player).removeLocation(Integer.parseInt(args[1]));
+                case "removelocation" -> {
+                    MinigameFramework.getFramework().getArenaManager().getEditArena(player).removeLocation(Integer.parseInt(args[1]));
+                    player.sendMessage(MessagesUtils.getMessage("admin_arena_removelocation"));
+                }
 
                 case "listlocations" -> {
                     try {

@@ -1,13 +1,13 @@
 package me.yarinlevi.minigameframework.game;
 
 import me.yarinlevi.minigameframework.MinigameFramework;
-import me.yarinlevi.minigameframework.game.events.GameStartEvent;
-import me.yarinlevi.minigameframework.game.events.PlayerDeathEvent;
+import me.yarinlevi.minigameframework.game.events.QGameStartEvent;
+import me.yarinlevi.minigameframework.game.events.QPlayerDeathEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 /**
@@ -19,7 +19,7 @@ public class GameListener implements Listener {
     public GameListener(Game game) {
         this.game = game;
 
-        GameStartEvent gameStartEvent = new GameStartEvent(game);
+        QGameStartEvent gameStartEvent = new QGameStartEvent(game);
         MinigameFramework.getInstance().getServer().getPluginManager().callEvent(gameStartEvent);
     }
 
@@ -38,23 +38,23 @@ public class GameListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerKill(EntityDeathEvent event) {
-        if (event.getEntity() instanceof Player victim) {
-            if (victim.getKiller() != null && game.isInGame(victim)) {
-                PlayerDeathEvent playerKillEvent = new PlayerDeathEvent(game, victim);
+    public void onPlayerKill(PlayerDeathEvent event) {
+        Player victim = event.getEntity();
 
-                playerKillEvent.setKiller(victim.getKiller());
+        if (victim.getKiller() != null && game.isInGame(victim)) {
+            QPlayerDeathEvent playerKillEvent = new QPlayerDeathEvent(game, victim);
 
-                MinigameFramework.getInstance().getServer().getPluginManager().callEvent(playerKillEvent);
+            playerKillEvent.setKiller(victim.getKiller());
 
-                game.lose(victim);
+            MinigameFramework.getInstance().getServer().getPluginManager().callEvent(playerKillEvent);
 
-                if (game.getAlivePlayers().size() == 1) {
-                    game.win(game.getAlivePlayers().stream().findFirst().orElseThrow());
-                }
-            } else if (victim.getKiller() == null && game.isInGame(victim)) {
+            game.lose(victim);
 
+            if (game.getAlivePlayers().size() == 1) {
+                game.win(game.getAlivePlayers().stream().findFirst().orElseThrow());
             }
+        } else if (victim.getKiller() == null && game.isInGame(victim)) {
+
         }
     }
 }

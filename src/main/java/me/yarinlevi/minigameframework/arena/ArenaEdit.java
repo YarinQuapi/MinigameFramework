@@ -1,6 +1,5 @@
 package me.yarinlevi.minigameframework.arena;
 
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,7 +39,7 @@ public class ArenaEdit {
             file.getParentFile().mkdirs();
         }
 
-        Clipboard clipboard = WorldEditUtils.copy(BukkitAdapter.adapt(world), pos1, pos2, location.toVector());
+        Clipboard clipboard = WorldEditUtils.copy(world, pos1, pos2, location.toVector());
 
         WorldEditUtils.save(file, clipboard);
 

@@ -11,6 +11,7 @@ import me.yarinlevi.minigameframework.exceptions.ArenaNotExistException;
 import me.yarinlevi.minigameframework.exceptions.NoArenaAvailable;
 import me.yarinlevi.minigameframework.game.GameManager;
 import me.yarinlevi.minigameframework.player.Statistics;
+import me.yarinlevi.minigameframework.utilities.MessagesUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class MinigameFramework {
@@ -27,15 +28,21 @@ public final class MinigameFramework {
 
         javaPlugin.saveDefaultConfig();
 
+        // Loads the server spawn/hub point
         serverSpawn = new ServerSpawn();
         serverSpawn.loadServerSpawn();
 
+        // Initializes and loads all arenas
         arenaManager = new ArenaManager();
         arenaManager.loadArenas();
 
+        // Initialize the game manager
         gameManager = new GameManager();
 
-        //Load default arenas, games
+        // Load non hardcode messages
+        new MessagesUtils();
+
+        // Load default arenas, games
         javaPlugin.getConfig().getStringList("auto-load").forEach(arenaName -> {
             try {
                 gameManager.createGame(arenaName);
