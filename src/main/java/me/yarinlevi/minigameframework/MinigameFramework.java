@@ -2,6 +2,7 @@ package me.yarinlevi.minigameframework;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.yarinlevi.minigameframework.administration.ServerSpawn;
 import me.yarinlevi.minigameframework.arena.ArenaManager;
 import me.yarinlevi.minigameframework.commands.AdminCommand;
@@ -12,7 +13,11 @@ import me.yarinlevi.minigameframework.exceptions.NoArenaAvailable;
 import me.yarinlevi.minigameframework.game.GameManager;
 import me.yarinlevi.minigameframework.player.Statistics;
 import me.yarinlevi.minigameframework.utilities.MessagesUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class MinigameFramework {
     @Getter private static JavaPlugin instance;
@@ -21,6 +26,7 @@ public final class MinigameFramework {
     @Getter @Setter private GameManager gameManager;
     @Getter private ServerSpawn serverSpawn;
     @Getter @Setter private Statistics statistics;
+    @Getter private boolean placeholderAPI = false;
 
     public void initialize(JavaPlugin javaPlugin) {
         framework = this;
@@ -39,9 +45,10 @@ public final class MinigameFramework {
         // Initialize the game manager
         gameManager = new GameManager();
 
-        // Load non hardcode messages
+        // Load non hardcoded messages
         new MessagesUtils();
 
+        javaPlugin.getLogger().log(Level.WARNING, "Loading default maps and games");
         // Load default arenas, games
         javaPlugin.getConfig().getStringList("auto-load").forEach(arenaName -> {
             try {
@@ -50,6 +57,11 @@ public final class MinigameFramework {
                 e.printStackTrace();
             }
         });
+
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            placeholderAPI = true;
+            javaPlugin.getLogger().log(Level.FINE, "PlaceholderAPI detected. Hooking..");
+        }
 
 
         javaPlugin.getCommand("arena").setExecutor(new ArenaCommand());

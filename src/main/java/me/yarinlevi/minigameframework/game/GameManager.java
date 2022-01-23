@@ -7,6 +7,7 @@ import me.yarinlevi.minigameframework.exceptions.ArenaNotExistException;
 import me.yarinlevi.minigameframework.exceptions.NoArenaAvailable;
 import me.yarinlevi.minigameframework.exceptions.PlayerNotInGameException;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,9 +75,10 @@ public class GameManager {
 
     /**
      * Gets the game the player is present in
-     * @throws PlayerNotInGameException If the player was not found in any game
+     * @return Player's game if in game, null if not.
      */
-    public Game getPlayerGame(Player player) throws PlayerNotInGameException {
-        return this.availableGames.stream().filter(game -> game.isInGame(player)).findFirst().orElseThrow(PlayerNotInGameException::new);
+    @Nullable
+    public Game getPlayerGame(Player player) {
+        return this.availableGames.stream().filter(game -> game.isInGame(player)).findFirst().orElse(null);
     }
 }

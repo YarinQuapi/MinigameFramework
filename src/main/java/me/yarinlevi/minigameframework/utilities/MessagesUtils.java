@@ -6,6 +6,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,6 +40,10 @@ public class MessagesUtils {
 
     public static String getMessage(String key, Object... args) {
         return messages.get(key).replaceAll("&", "§").formatted(args);
+    }
+
+    public static List<String> getLines(String key) {
+        return messagesData.getStringList(key);
     }
 
     public static String getMessageLines(String key, Object... args) {

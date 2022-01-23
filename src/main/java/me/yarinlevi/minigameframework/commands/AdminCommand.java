@@ -20,9 +20,11 @@ public class AdminCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player player) {
             switch (args[0].toLowerCase()) {
+                default -> player.sendMessage(MessagesUtils.getMessageLines("command_admin_help"));
+
                 case "setspawn" -> {
                     MinigameFramework.getFramework().getServerSpawn().setServerSpawn(player.getLocation());
-                    player.sendMessage("Successfully changed server spawn!");
+                    player.sendMessage(MessagesUtils.getMessage("admin_spawn_set"));
                     return true;
                 }
 
@@ -44,24 +46,27 @@ public class AdminCommand implements CommandExecutor {
                 }
 
                 case "forcestart" -> {
-                    try {
-                        Game game = MinigameFramework.getFramework().getGameManager().getPlayerGame(player);
+                    Game game = MinigameFramework.getFramework().getGameManager().getPlayerGame(player);
+
+                    if (game != null) {
 
                         game.construct();
                         game.begin();
 
                         player.sendMessage(MessagesUtils.getMessage("admin_force_started"));
-                    } catch (PlayerNotInGameException e) {
+                    } else {
                         player.sendMessage(MessagesUtils.getMessage("not_in_game"));
                     }
                 }
 
                 case "resetgame" -> {
-                    try {
-                        Game game = MinigameFramework.getFramework().getGameManager().getPlayerGame(player);
+                    Game game = MinigameFramework.getFramework().getGameManager().getPlayerGame(player);
 
+                    if (game != null) {
                         game.reset();
-                    } catch (PlayerNotInGameException e) {
+
+                        player.sendMessage(MessagesUtils.getMessage("admin_reset_game"));
+                    } else {
                         player.sendMessage(MessagesUtils.getMessage("not_in_game"));
                     }
                 }

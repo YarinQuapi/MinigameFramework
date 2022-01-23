@@ -15,17 +15,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author YarinQuapi
  * Used as a base Game class, can be replaced with a custom one.
+ * Todo: Add player login-quit-based logging
  **/
 public class Game {
     @Getter private final Arena arena;
     @Getter private final String gameName;
-    @Getter private final List<Player> gamePlayers = new ArrayList<>();
+    @Getter private final LinkedHashMap<Player, PlayerGameStat> gamePlayers = new LinkedHashMap<>();
+    @Getter private final LinkedList<Player> players = new LinkedList<>();
     @Getter private final List<Player> alivePlayers = new ArrayList<>();
     @Getter private GameState gameState = GameState.UNINITIALIZED;
 
@@ -100,7 +101,7 @@ public class Game {
         started = true;
         tick = 0; // Reset tick clock to allow for accurate game time count
         gameTimer = 0; // Just in case
-        alivePlayers.addAll(gamePlayers); // Copy players
+        alivePlayers.addAll(gamePlayers.keySet()); // Copy players
 
         Bukkit.getServer().getPluginManager().registerEvents(this.gameListener, MinigameFramework.getInstance());
 
@@ -113,6 +114,7 @@ public class Game {
 
     /**
      * Player start, e.g. drop cages, move from lobby to game, etc.
+     * Overridable
      */
     public void start() {
 
@@ -136,7 +138,7 @@ public class Game {
         this.task.cancel();
 
         // Teleport everyone out of the game and set their gamemode to survival //Todo: allow gamemode configuration
-        this.gamePlayers.forEach(player -> {
+        this.gamePlayers.keySet().forEach(player -> {
             player.setGameMode(GameMode.SURVIVAL);
             player.teleport(location);
         });
@@ -160,12 +162,12 @@ public class Game {
 
     /**
      * Used method when a player dies, declares him dead
-     * @param player
+     * @param player who died
      */
     public void lose(Player player) {
         player.setGameMode(GameMode.SPECTATOR);
         alivePlayers.remove(player);
-        arena.getLocations().get(this.gamePlayers.indexOf(player)).teleport(player);
+        this.getArena().getLocations().get(players.indexOf(player)).teleport(player);
         player.sendTitle("§cYou lose!", "§ePlease use /game leave to return to lobby", 10, 200, 20);
     }
 
@@ -174,6 +176,7 @@ public class Game {
      * Used to replace the game's listener to allow for custom options per game and runtime editing
      * @param gameListener the new listener
      */
+    @Deprecated(since = "Prototype-4")
     public void replaceGameListener(Class<? extends GameListener> gameListener) {
         try {
             GameListener gl = gameListener.newInstance();
@@ -204,12 +207,13 @@ public class Game {
             MinigameFramework.getInstance().getServer().getPluginManager().callEvent(playerJoinGameEvent);
 
             if (playerJoinGameEvent.getResult() == Result.allowed) {
-                this.gamePlayers.add(player);
+                this.gamePlayers.put(player, new PlayerGameStat(player));
+                this.getPlayers().add(player);
                 MinigameFramework.getFramework().getGameManager().getPlayersInGame().add(player);
 
 
                 // Teleports player to his spawn location
-                arena.getLocations().get(this.gamePlayers.indexOf(player)).teleport(player);
+                arena.getLocations().get(this.players.indexOf(player)).teleport(player);
 
                 // Begin start process if enough players are present
                 if (canStart()) {
@@ -228,7 +232,7 @@ public class Game {
      * @return true if is in game
      */
     public boolean isInGame(Player player) {
-        return gamePlayers.stream().anyMatch(x -> x.getUniqueId().equals(player.getUniqueId()));
+        return gamePlayers.keySet().stream().anyMatch(x -> x.getUniqueId().equals(player.getUniqueId()));
     }
 
     /**
@@ -236,8 +240,9 @@ public class Game {
      * @return true if removed, false if wasn't present
      */
     public boolean removePlayer(Player player) {
-        if (gamePlayers.contains(player)) {
+        if (gamePlayers.containsKey(player)) {
             gamePlayers.remove(player);
+            players.remove(player);
 
             alivePlayers.remove(player); // Remove if player uses /lobby
 
@@ -270,8 +275,7 @@ public class Game {
         if (this.isFull()) return false;
         if (this.gameState == GameState.RUNNING) return false;
         if (this.gameState == GameState.STOPPED) return false;
-        if (this.gameState == GameState.RESTARTING) return false;
 
-        return true;
+        return this.gameState != GameState.RESTARTING;
     }
 }

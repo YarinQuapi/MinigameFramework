@@ -1,10 +1,14 @@
-# Player errors
-not_in_game: "&cYou are not in a game!"
+# Player messages
+game_leave: "&7You have left the game!"
+game_joined: "&7You have joined a game!"
+
 # Admin game settings
 admin_force_started: "&cSuccessfully force started game"
+
 # Game errors
 arena_running: "&cA game is already running on that arena."
 arena_not_exists: "&cNo arena with that name was found."
+
 # Arena settings
 arena_create_begin: "&eStarted new arena creation.. Please add locations and map corners"
 admin_arena_pos1: "&eSet position 1"
@@ -12,6 +16,14 @@ admin_arena_pos2: "&eSet position 2"
 admin_arena_savemap: "&eSaved map schematics"
 admin_arena_addlocation: "&eSuccessfully added location"
 admin_arena_removelocation: "&eSuccessfully removed location"
+admin_reset_game: "&eSuccessfully reset game arena."
 
 # Player error messages
 you_are_not_allowed: "&cAction failed! &7You have been blocked from performing this action."
+not_in_game: "&cYou are not in a game!"
+
+# Commands
+command_arena_help:
+  - "This is the help command that needs to be constructed"
+command_admin_help:
+  - "This is the admin command index that needs to be constructed"

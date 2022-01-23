@@ -1,5 +1,7 @@
 package me.yarinlevi.minigameframework.scoreboard;
 
+import me.yarinlevi.minigameframework.MinigameFramework;
+import me.yarinlevi.minigameframework.game.Game;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
@@ -26,7 +28,7 @@ public class PlayerScoreboard {
 
         Scoreboard board = sc.getNewScoreboard();
         Objective objective = board
-                .registerNewObjective("game-scoreboard", "dummy", displayName);
+                .registerNewObjective("minigame-framework-scoreboard", "dummy", displayName);
 
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 

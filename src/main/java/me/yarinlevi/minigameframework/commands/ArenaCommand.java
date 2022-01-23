@@ -17,6 +17,8 @@ public class ArenaCommand implements CommandExecutor {
         if (sender instanceof Player player) {
 
             switch (args[0].toLowerCase()) {
+                default -> player.sendMessage(MessagesUtils.getMessageLines("command_arena_help"));
+
                 case "createarena" -> {
                     MinigameFramework.getFramework().getArenaManager().createArena(player, args[1], Integer.parseInt(args[2]));
                     player.sendMessage(MessagesUtils.getMessage("arena_create_begin"));

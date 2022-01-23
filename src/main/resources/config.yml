@@ -15,8 +15,15 @@ lobby-scoreboard:
   lines:
     - "Lobby Scoreboard"
 
-game-scoreboard:
+game-running-scoreboard:
   enabled: true
   displayName: "Game Scoreboard"
   lines:
     - "Game Scoreboard"
+
+game-waiting-scoreboard:
+  enabled: true
+  displayName: "Game Waiting Scoreboard"
+  lines:
+    - "Game Scoreboard"
+    - "9/10 players"

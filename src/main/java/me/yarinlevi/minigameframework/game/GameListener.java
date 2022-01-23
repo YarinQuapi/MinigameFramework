@@ -25,14 +25,14 @@ public class GameListener implements Listener {
 
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent event) {
-        if (!game.isStarted()) {
+        if (event.getEntity() instanceof Player player && game.isInGame(player) && !game.isStarted()) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
-        if (!game.isStarted()) {
+        if (game.isInGame(event.getPlayer()) && !game.isStarted()) {
             event.setCancelled(true);
         }
     }
@@ -48,13 +48,13 @@ public class GameListener implements Listener {
 
             MinigameFramework.getInstance().getServer().getPluginManager().callEvent(playerKillEvent);
 
-            game.lose(victim);
-
-            if (game.getAlivePlayers().size() == 1) {
-                game.win(game.getAlivePlayers().stream().findFirst().orElseThrow());
-            }
+            MinigameFramework.getFramework().getStatistics().addDeath(victim);
         } else if (victim.getKiller() == null && game.isInGame(victim)) {
+            QPlayerDeathEvent playerKillEvent = new QPlayerDeathEvent(game, victim);
 
+            MinigameFramework.getInstance().getServer().getPluginManager().callEvent(playerKillEvent);
+
+            MinigameFramework.getFramework().getStatistics().addDeath(victim);
         }
     }
 }

@@ -6,7 +6,7 @@
 
     <groupId>me.yarinlevi</groupId>
     <artifactId>minigame-framework</artifactId>
-    <version>Prototype-4</version>
+    <version>Prototype-4-dev1</version>
     <packaging>jar</packaging>
 
     <name>MinigameFramework</name>
