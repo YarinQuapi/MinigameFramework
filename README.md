@@ -11,7 +11,7 @@ The goal is to allow almost anyone to easily create and manage their Minigames, 
 
 ## Roadmap
 ### From now until the first release
-The updated plan is to have the framework be minimally supportive and working somewhen in Q1 2022 (January-March)
+The updated plan is to have the framework be minimally supportive and working somewhen in Q3 2022 (January-March)
 The idea of that version would be to support single-player-teams games like Skywars or Survival Games
 ### From 0.1R and to the future
 The main plan is to release an update atleast once per month adding a new major feature
