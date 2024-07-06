@@ -197,7 +197,7 @@ public class Game {
 
     /**
      * Add a player to the game
-     * @return true if added successfully
+     * @return allowed if added successfully
      */
     public Result addPlayer(Player player) {
         if (!isJoiningAllowed()) {

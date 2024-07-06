@@ -27,6 +27,7 @@ public final class MinigameFramework {
     @Getter private ServerSpawn serverSpawn;
     @Getter @Setter private Statistics statistics;
     @Getter private boolean placeholderAPI = false;
+    @Getter private String version = "§aPrototype 5";
 
     public void initialize(JavaPlugin javaPlugin) {
         framework = this;
@@ -61,6 +62,8 @@ public final class MinigameFramework {
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             placeholderAPI = true;
             javaPlugin.getLogger().log(Level.FINE, "PlaceholderAPI detected. Hooking..");
+        } else {
+            javaPlugin.getLogger().log(Level.SEVERE, "The Minigame Framework requires PlaceholderAPI for it to work correctly, thing will break when not in use!");
         }
 
 
